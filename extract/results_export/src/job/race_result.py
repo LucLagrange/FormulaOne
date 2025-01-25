@@ -110,7 +110,7 @@ def main() -> None:
                 )
 
             # Add delay to respect rate limits
-            time.sleep(10)  # 1 seconds delay for burst limit (4 requests per second)
+            time.sleep(8)  # 1 seconds delay for burst limit (4 requests per second)
 
 
 if __name__ == "__main__":
