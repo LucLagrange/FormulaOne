@@ -1,6 +1,8 @@
 import requests
 import logging
 import time
+import os
+from typing import Dict, List, Optional
 from google.cloud import bigquery
 
 # Configure the logging module
@@ -10,7 +12,7 @@ logging.basicConfig(
 
 
 # Function to fetch F1 race results
-def fetch_f1_results(season, round_number):
+def fetch_f1_results(season: str, round_number: str) -> Optional[Dict]:
     base_url = "http://api.jolpi.ca/ergast/f1"
     url = f"{base_url}/{season}/{round_number}/results"
     logging.info(
@@ -29,9 +31,9 @@ def fetch_f1_results(season, round_number):
 
 
 # Function to process and format race results
-def process_race_results(data):
+def process_race_results(data: Dict) -> List[Dict]:
     logging.info("Processing race results data")
-    processed_data = []
+    processed_data: List[Dict] = []
 
     if (
         "MRData" in data
@@ -43,11 +45,6 @@ def process_race_results(data):
             race_info = {
                 "season": race["season"],
                 "round": race["round"],
-                "race_name": race["raceName"],
-                "circuit_id": race["Circuit"]["circuitId"],
-                "location": race["Circuit"]["Location"]["locality"],
-                "country": race["Circuit"]["Location"]["country"],
-                "date": race["date"],
             }
             for result in race["Results"]:
                 driver_result = race_info.copy()
@@ -57,6 +54,7 @@ def process_race_results(data):
                         "points": result["points"],
                         "driver_id": result["Driver"]["driverId"],
                         "constructor_id": result["Constructor"]["constructorId"],
+                        "grid": result["grid"],
                         "laps": result["laps"],
                         "status": result["status"],
                     }
@@ -66,7 +64,7 @@ def process_race_results(data):
 
 
 # Function to insert data into BigQuery
-def insert_results_to_bigquery(results, table_id):
+def insert_results_to_bigquery(results: List[Dict], table_id: str) -> None:
     client = bigquery.Client()
     logging.info("Inserting results into BigQuery")
 
@@ -82,15 +80,19 @@ def insert_results_to_bigquery(results, table_id):
         logging.error("An error occurred while inserting data into BigQuery: %s", e)
 
 
-def main():
-    table_id = "formulaone-448910.custom_script.Results"
-    seasons = [str(year) for year in range(1990, 1991)]
-    rounds = [str(round) for round in range(1, 30)]
+def main() -> None:
+    # Get the table ID from environment variable
+    table_id = os.getenv("RESULTS_TABLE_ID")
+    if not table_id:
+        logging.error("Environment variable TABLE_ID is not set.")
+        return
+
+    seasons = [str(year) for year in range(1990, 2026)]  # Creates a list of seasons
+    rounds = [str(round) for round in range(1, 30)]  # Creates a list of rounds
 
     for season in seasons:
         for round_number in rounds:
             data = fetch_f1_results(season, round_number)
-            print(data)
             # Check if data exists for the round
             if (
                 data
@@ -108,9 +110,7 @@ def main():
                 )
 
             # Add delay to respect rate limits
-            time.sleep(
-                0.25
-            )  # 0.25 seconds delay for burst limit (4 requests per second)
+            time.sleep(1)  # 1 seconds delay for burst limit (4 requests per second)
 
 
 if __name__ == "__main__":
