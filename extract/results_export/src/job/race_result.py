@@ -10,6 +10,7 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+season = "2024"
 
 # Function to fetch F1 race results
 def fetch_f1_results(season: str, round_number: str) -> Optional[Dict]:
@@ -87,30 +88,28 @@ def main() -> None:
         logging.error("Environment variable TABLE_ID is not set.")
         return
 
-    seasons = [str(year) for year in range(1990, 2026)]  # Creates a list of seasons
     rounds = [str(round) for round in range(1, 30)]  # Creates a list of rounds
 
-    for season in seasons:
-        for round_number in rounds:
-            data = fetch_f1_results(season, round_number)
-            # Check if data exists for the round
-            if (
-                data
-                and "MRData" in data
-                and "RaceTable" in data["MRData"]
-                and data["MRData"]["RaceTable"]["Races"]
-            ):
-                results = process_race_results(data)
-                insert_results_to_bigquery(results, table_id)
-            else:
-                logging.info(
-                    "No data available for Season: %s, Round: %s. Skipping.",
-                    season,
-                    round_number,
-                )
+    for round_number in rounds:
+        data = fetch_f1_results(season, round_number)
+        # Check if data exists for the round
+        if (
+            data
+            and "MRData" in data
+            and "RaceTable" in data["MRData"]
+            and data["MRData"]["RaceTable"]["Races"]
+        ):
+            results = process_race_results(data)
+            insert_results_to_bigquery(results, table_id)
+        else:
+            logging.info(
+                "No data available for Season: %s, Round: %s. Skipping.",
+                season,
+                round_number,
+            )
 
-            # Add delay to respect rate limits
-            time.sleep(8)  # 1 seconds delay for burst limit (4 requests per second)
+        # Add delay to respect rate limits
+        time.sleep(1)  # 1 seconds delay for burst limit (4 requests per second)
 
 
 if __name__ == "__main__":

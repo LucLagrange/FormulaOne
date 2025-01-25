@@ -10,6 +10,7 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+season = "2024"
 
 # Function to fetch F1 qualifying results
 def fetch_f1_qualifying_results(season: str, round_number: str) -> Optional[Dict]:
@@ -88,24 +89,22 @@ def main() -> None:
         logging.error("Environment variable QUALIFYING_RESULTS_TABLE_ID is not set.")
         return
 
-    seasons = [str(year) for year in range(1990, 2026)]  # Example season range
     rounds = [str(round) for round in range(1, 30)]  # Example round range
 
-    for season in seasons:
-        for round_number in rounds:
-            qualifying_data = fetch_f1_qualifying_results(season, round_number)
-            if qualifying_data:
-                qualifying_results = process_qualifying_results(qualifying_data)
-                if qualifying_results:
-                    insert_results_to_bigquery(qualifying_results, table_id)
-                else:
-                    logging.info(
-                        "No qualifying results to insert for Season: %s, Round: %s",
-                        season,
-                        round_number,
-                    )
-                # Add delay to respect rate limits
-                time.sleep(8)  # 1 seconds delay for burst limit (4 requests per second)
+    for round_number in rounds:
+        qualifying_data = fetch_f1_qualifying_results(season, round_number)
+        if qualifying_data:
+            qualifying_results = process_qualifying_results(qualifying_data)
+            if qualifying_results:
+                insert_results_to_bigquery(qualifying_results, table_id)
+            else:
+                logging.info(
+                    "No qualifying results to insert for Season: %s, Round: %s",
+                    season,
+                    round_number,
+                )
+            # Add delay to respect rate limits
+            time.sleep(1)  # 1 seconds delay for burst limit (4 requests per second)
 
 
 if __name__ == "__main__":
