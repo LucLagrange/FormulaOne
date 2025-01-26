@@ -10,8 +10,6 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-season = "2024"
-
 # Function to fetch F1 qualifying results
 def fetch_f1_qualifying_results(season: str, round_number: str) -> Optional[Dict]:
     base_url = "http://api.jolpi.ca/ergast/f1"
@@ -85,6 +83,8 @@ def insert_results_to_bigquery(results: List[Dict], table_id: str) -> None:
 def main() -> None:
     # Get the table ID from environment variable
     table_id = os.getenv("QUALIFYING_TABLE_ID")
+    season = os.getenv("SEASON")
+
     if not table_id:
         logging.error("Environment variable QUALIFYING_RESULTS_TABLE_ID is not set.")
         return
