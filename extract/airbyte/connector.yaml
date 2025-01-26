@@ -1,0 +1,497 @@
+version: 6.13.0
+
+type: DeclarativeSource
+
+check:
+  type: CheckStream
+  stream_names:
+    - Seasons
+
+definitions:
+  streams:
+    Races:
+      type: DeclarativeStream
+      name: Races
+      retriever:
+        type: SimpleRetriever
+        paginator:
+          type: DefaultPaginator
+          page_size_option:
+            type: RequestOption
+            field_name: limit
+            inject_into: request_parameter
+          page_token_option:
+            type: RequestOption
+            field_name: offset
+            inject_into: request_parameter
+          pagination_strategy:
+            type: OffsetIncrement
+            page_size: 30
+            inject_on_first_request: true
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /races
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - MRData
+              - RaceTable
+              - Races
+      primary_key:
+        - season
+        - round
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/Races"
+    Status:
+      type: DeclarativeStream
+      name: Status
+      retriever:
+        type: SimpleRetriever
+        paginator:
+          type: DefaultPaginator
+          page_size_option:
+            type: RequestOption
+            field_name: limit
+            inject_into: request_parameter
+          page_token_option:
+            type: RequestOption
+            field_name: offset
+            inject_into: request_parameter
+          pagination_strategy:
+            type: OffsetIncrement
+            page_size: 30
+            inject_on_first_request: true
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /status
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - MRData
+              - StatusTable
+              - Status
+      primary_key:
+        - statusId
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/Status"
+    Drivers:
+      type: DeclarativeStream
+      name: Drivers
+      retriever:
+        type: SimpleRetriever
+        paginator:
+          type: DefaultPaginator
+          page_size_option:
+            type: RequestOption
+            field_name: limit
+            inject_into: request_parameter
+          page_token_option:
+            type: RequestOption
+            field_name: offset
+            inject_into: request_parameter
+          pagination_strategy:
+            type: OffsetIncrement
+            page_size: 30
+            inject_on_first_request: true
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /drivers
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - MRData
+              - DriverTable
+              - Drivers
+      primary_key:
+        - driverId
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/Drivers"
+    Seasons:
+      type: DeclarativeStream
+      name: Seasons
+      retriever:
+        type: SimpleRetriever
+        paginator:
+          type: DefaultPaginator
+          page_size_option:
+            type: RequestOption
+            field_name: limit
+            inject_into: request_parameter
+          page_token_option:
+            type: RequestOption
+            field_name: offset
+            inject_into: request_parameter
+          pagination_strategy:
+            type: OffsetIncrement
+            page_size: 30
+            inject_on_first_request: true
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: seasons/
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - MRData
+              - SeasonTable
+              - Seasons
+      primary_key:
+        - season
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/Seasons"
+    Circuits:
+      type: DeclarativeStream
+      name: Circuits
+      retriever:
+        type: SimpleRetriever
+        paginator:
+          type: DefaultPaginator
+          page_size_option:
+            type: RequestOption
+            field_name: limit
+            inject_into: request_parameter
+          page_token_option:
+            type: RequestOption
+            field_name: offset
+            inject_into: request_parameter
+          pagination_strategy:
+            type: OffsetIncrement
+            page_size: 30
+            inject_on_first_request: true
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /circuits
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - MRData
+              - CircuitTable
+              - Circuits
+      primary_key:
+        - circuitId
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/Circuits"
+    Constructors:
+      type: DeclarativeStream
+      name: Constructors
+      retriever:
+        type: SimpleRetriever
+        paginator:
+          type: DefaultPaginator
+          page_size_option:
+            type: RequestOption
+            field_name: limit
+            inject_into: request_parameter
+          page_token_option:
+            type: RequestOption
+            field_name: offset
+            inject_into: request_parameter
+          pagination_strategy:
+            type: OffsetIncrement
+            page_size: 30
+            inject_on_first_request: true
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /constructors
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - MRData
+              - ConstructorTable
+              - Constructors
+      primary_key:
+        - constructorId
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/Constructors"
+  base_requester:
+    type: HttpRequester
+    url_base: http://api.jolpi.ca/ergast/f1/
+
+streams:
+  - $ref: "#/definitions/streams/Seasons"
+  - $ref: "#/definitions/streams/Drivers"
+  - $ref: "#/definitions/streams/Circuits"
+  - $ref: "#/definitions/streams/Constructors"
+  - $ref: "#/definitions/streams/Status"
+  - $ref: "#/definitions/streams/Races"
+
+spec:
+  type: Spec
+  connection_specification:
+    type: object
+    $schema: http://json-schema.org/draft-07/schema#
+    required: []
+    properties: {}
+    additionalProperties: true
+
+metadata:
+  assist: {}
+  testedStreams:
+    Races:
+      hasRecords: true
+      streamHash: 199f7d9276a7255d592ca5b3bf32e489b8968097
+      hasResponse: true
+      primaryKeysAreUnique: true
+      primaryKeysArePresent: true
+      responsesAreSuccessful: true
+    Status:
+      hasRecords: true
+      streamHash: 57df452f2e387367e0e65655680470711e07b8d4
+      hasResponse: true
+      primaryKeysAreUnique: true
+      primaryKeysArePresent: true
+      responsesAreSuccessful: true
+    Drivers:
+      hasRecords: true
+      streamHash: 5f9ceb718a6a87de0ce034172ee087dcbb03b291
+      hasResponse: true
+      primaryKeysAreUnique: true
+      primaryKeysArePresent: true
+      responsesAreSuccessful: true
+    Seasons:
+      hasRecords: true
+      streamHash: 9ac6648806af4bf4ae9ceb63ec14a0d7c659b5e1
+      hasResponse: true
+      primaryKeysAreUnique: true
+      primaryKeysArePresent: true
+      responsesAreSuccessful: true
+    Circuits:
+      hasRecords: true
+      streamHash: e5ae8b3d2341cdceee3268af3a231e55113adc4a
+      hasResponse: true
+      primaryKeysAreUnique: true
+      primaryKeysArePresent: true
+      responsesAreSuccessful: true
+    Constructors:
+      hasRecords: true
+      streamHash: 01b5de73a65aede8cc149db64efefea2c4ba91a8
+      hasResponse: true
+      primaryKeysAreUnique: true
+      primaryKeysArePresent: true
+      responsesAreSuccessful: true
+  autoImportSchema:
+    Races: true
+    Status: true
+    Drivers: true
+    Seasons: true
+    Circuits: true
+    Constructors: true
+
+schemas:
+  Races:
+    type: object
+    $schema: http://json-schema.org/schema#
+    required:
+      - season
+      - round
+    properties:
+      url:
+        type:
+          - string
+          - "null"
+      date:
+        type:
+          - string
+          - "null"
+      round:
+        type: string
+      season:
+        type: string
+      Circuit:
+        type:
+          - object
+          - "null"
+        properties:
+          url:
+            type:
+              - string
+              - "null"
+          Location:
+            type:
+              - object
+              - "null"
+            properties:
+              lat:
+                type:
+                  - string
+                  - "null"
+              long:
+                type:
+                  - string
+                  - "null"
+              country:
+                type:
+                  - string
+                  - "null"
+              locality:
+                type:
+                  - string
+                  - "null"
+          circuitId:
+            type:
+              - string
+              - "null"
+          circuitName:
+            type:
+              - string
+              - "null"
+      raceName:
+        type:
+          - string
+          - "null"
+    additionalProperties: true
+  Status:
+    type: object
+    $schema: http://json-schema.org/schema#
+    required:
+      - statusId
+    properties:
+      count:
+        type:
+          - string
+          - "null"
+      status:
+        type:
+          - string
+          - "null"
+      statusId:
+        type: string
+    additionalProperties: true
+  Drivers:
+    type: object
+    $schema: http://json-schema.org/schema#
+    required:
+      - driverId
+    properties:
+      url:
+        type:
+          - string
+          - "null"
+      code:
+        type:
+          - string
+          - "null"
+      driverId:
+        type: string
+      givenName:
+        type:
+          - string
+          - "null"
+      familyName:
+        type:
+          - string
+          - "null"
+      dateOfBirth:
+        type:
+          - string
+          - "null"
+      nationality:
+        type:
+          - string
+          - "null"
+      permanentNumber:
+        type:
+          - string
+          - "null"
+    additionalProperties: true
+  Seasons:
+    type: object
+    $schema: http://json-schema.org/schema#
+    required:
+      - season
+    properties:
+      url:
+        type:
+          - string
+          - "null"
+      season:
+        type: string
+    additionalProperties: true
+  Circuits:
+    type: object
+    $schema: http://json-schema.org/schema#
+    required:
+      - circuitId
+    properties:
+      url:
+        type:
+          - string
+          - "null"
+      Location:
+        type:
+          - object
+          - "null"
+        properties:
+          lat:
+            type:
+              - string
+              - "null"
+          long:
+            type:
+              - string
+              - "null"
+          country:
+            type:
+              - string
+              - "null"
+          locality:
+            type:
+              - string
+              - "null"
+      circuitId:
+        type: string
+      circuitName:
+        type:
+          - string
+          - "null"
+    additionalProperties: true
+  Constructors:
+    type: object
+    $schema: http://json-schema.org/schema#
+    required:
+      - constructorId
+    properties:
+      url:
+        type:
+          - string
+          - "null"
+      name:
+        type:
+          - string
+          - "null"
+      nationality:
+        type:
+          - string
+          - "null"
+      constructorId:
+        type: string
+    additionalProperties: true

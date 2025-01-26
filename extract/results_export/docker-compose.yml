@@ -1,0 +1,15 @@
+services:
+  results_export:
+    image: results_export:0.1
+    build:
+      dockerfile: Dockerfile
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: '/credentials/credentials.json'
+      RESULTS_TABLE_ID: 'formulaone-448910.custom_script.race_result'
+      SPRINT_TABLE_ID: 'formulaone-448910.custom_script.sprint_result'
+      QUALIFYING_TABLE_ID: 'formulaone-448910.custom_script.qualifying_result'
+      SEASON: '2023'
+    volumes:
+      # Source code
+      - ./src/job:/opt/program/job
+      - ~/CREDS/PERSONAL/FORMULAONE/credentials.json:/credentials/credentials.json
