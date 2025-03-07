@@ -1,0 +1,83 @@
+2025-03-07 15:04:13,736 - MainThread - sqlmesh.core.config.scheduler - WARNING - The bigquery engine is not recommended for storing SQLMesh state in production deployments. Please see https://sqlmesh.readthedocs.io/en/stable/guides/configuration/#state-connection for a list of recommended engines and more information. (scheduler.py:112)
+2025-03-07 15:05:06,162 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Listing data objects in schema "formulaone-448910".sqlmesh__staging (evaluator.py:316)
+2025-03-07 15:05:06,165 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: WITH `clustering_info` AS (SELECT `table_catalog`, `table_schema`, `table_name`, STRING_AGG(`column_name` ORDER BY `clustering_ordinal_position`) AS `clustering_key` FROM `formulaone-448910`.`sqlmesh__staging`.`INFORMATION_SCHEMA.COLUMNS` AS `COLUMNS` WHERE `clustering_ordinal_position` IS NOT NULL GROUP BY 1, 2, 3) SELECT `table_catalog` AS `catalog`, `table_name` AS `name`, `table_schema` AS `schema_name`, CASE WHEN `table_type` = 'BASE TABLE' THEN 'TABLE' WHEN `table_type` = 'CLONE' THEN 'TABLE' WHEN `table_type` = 'EXTERNAL' THEN 'TABLE' WHEN `table_type` = 'SNAPSHOT' THEN 'TABLE' WHEN `table_type` = 'VIEW' THEN 'VIEW' WHEN `table_type` = 'MATERIALIZED VIEW' THEN 'MATERIALIZED_VIEW' ELSE `table_type` END AS `type`, `ci`.`clustering_key` AS `clustering_key` FROM `formulaone-448910`.`sqlmesh__staging`.`INFORMATION_SCHEMA.TABLES` AS `TABLES` LEFT JOIN `clustering_info` AS `ci` USING (`table_catalog`, `table_schema`, `table_name`) WHERE `table_name` IN ('staging__stg_constructors__469623500', 'staging__stg_circuits__622503816', 'staging__stg_drivers__12416357') (base.py:2079)
+2025-03-07 15:05:08,876 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Creating schema '"formulaone-448910".sqlmesh__staging' (evaluator.py:1044)
+2025-03-07 15:05:08,877 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: CREATE SCHEMA IF NOT EXISTS `formulaone-448910`.`sqlmesh__staging` (base.py:2079)
+2025-03-07 15:05:09,877 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Creating view '"formulaone-448910".sqlmesh__staging.staging__stg_constructors__469623500' (evaluator.py:1788)
+2025-03-07 15:05:09,880 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: CREATE VIEW `formulaone-448910`.`sqlmesh__staging`.`staging__stg_constructors__469623500` OPTIONS (description='The constructors that race in the Formula One Championship') AS SELECT CAST(`constructorid` AS STRING) AS `id_constructor`, `name` AS `constructor_name`, `url` AS `constructor_url`, `nationality` AS `nationality` FROM `formulaone-448910`.`raw_data`.`Constructors` AS `constructors` (base.py:2079)
+2025-03-07 15:05:10,635 - MainThread - sqlmesh.core.engine_adapter.bigquery - INFO - Registering column comments for table "formulaone-448910".sqlmesh__staging.staging__stg_constructors__469623500 (bigquery.py:685)
+2025-03-07 15:05:11,436 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Creating view '"formulaone-448910".sqlmesh__staging.staging__stg_drivers__12416357' (evaluator.py:1788)
+2025-03-07 15:05:11,439 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: CREATE VIEW `formulaone-448910`.`sqlmesh__staging`.`staging__stg_drivers__12416357` OPTIONS (description='The drivers that race in the Formula One Championship') AS SELECT CAST(`driverid` AS STRING) AS `id_driver`, `url` AS `driver_url`, `code` AS `driver_code`, `givenname` AS `first_name`, `familyname` AS `last_name`, CAST(`dateofbirth` AS DATE) AS `dt_birth`, `nationality` AS `nationality`, `permanentnumber` AS `driver_number` FROM `formulaone-448910`.`raw_data`.`Constructors` AS `constructors` (base.py:2079)
+2025-03-07 15:05:11,858 - MainThread - sqlmesh.core.context - ERROR - Apply Failure: Traceback (most recent call last):
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/utils/concurrency.py", line 227, in sequential_apply_to_dag
+    fn(node)
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/utils/concurrency.py", line 165, in <lambda>
+    lambda s_id: fn(snapshots_by_id[s_id]),
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/snapshot/evaluator.py", line 370, in <lambda>
+    lambda s: self._create_snapshot(
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/snapshot/evaluator.py", line 815, in _create_snapshot
+    evaluation_strategy.create(
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/snapshot/evaluator.py", line 1797, in create
+    self.adapter.create_view(
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/engine_adapter/shared.py", line 302, in internal_wrapper
+    return func(*list_args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/engine_adapter/base.py", line 1046, in create_view
+    self.execute(
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/engine_adapter/base.py", line 2076, in execute
+    self._execute(sql, **kwargs)
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/engine_adapter/bigquery.py", line 896, in _execute
+    results = self._db_call(
+              ^^^^^^^^^^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/engine_adapter/bigquery.py", line 854, in _db_call
+    return func(
+           ^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/google/cloud/bigquery/job/query.py", line 1681, in result
+    while not is_job_done():
+              ^^^^^^^^^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/google/api_core/retry/retry_unary.py", line 293, in retry_wrapped_func
+    return retry_target(
+           ^^^^^^^^^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/google/api_core/retry/retry_unary.py", line 153, in retry_target
+    _retry_error_helper(
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/google/api_core/retry/retry_base.py", line 212, in _retry_error_helper
+    raise final_exc from source_exc
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/google/api_core/retry/retry_unary.py", line 144, in retry_target
+    result = target()
+             ^^^^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/google/cloud/bigquery/job/query.py", line 1630, in is_job_done
+    raise job_failed_exception
+google.api_core.exceptions.BadRequest: 400 Unrecognized name: driverid at [1:178]; reason: invalidQuery, location: query, message: Unrecognized name: driverid at [1:178]
+
+Location: EU
+Job ID: c6446722-c745-40c9-b40f-b1aad6c9f585
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/context.py", line 1404, in apply
+    self._apply(plan, circuit_breaker)
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/context.py", line 1983, in _apply
+    self._scheduler.create_plan_evaluator(self).evaluate(
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/plan/evaluator.py", line 123, in evaluate
+    self._push(plan, snapshots, deployability_index_for_creation)
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/plan/evaluator.py", line 230, in _push
+    self.snapshot_evaluator.create(
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/snapshot/evaluator.py", line 348, in create
+    self._create_snapshots(
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/core/snapshot/evaluator.py", line 368, in _create_snapshots
+    concurrent_apply_to_snapshots(
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/utils/concurrency.py", line 163, in concurrent_apply_to_snapshots
+    return concurrent_apply_to_dag(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/utils/concurrency.py", line 198, in concurrent_apply_to_dag
+    return sequential_apply_to_dag(dag, fn, raise_on_error)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luc/Documents/Personal_Projects/FormulaOne/venv/lib/python3.12/site-packages/sqlmesh/utils/concurrency.py", line 230, in sequential_apply_to_dag
+    raise NodeExecutionFailedError(node) from ex
+sqlmesh.utils.concurrency.NodeExecutionFailedError: Execution failed for node SnapshotId<"formulaone-448910"."staging"."stg_drivers": 4223093533>
+ (context.py:1412)
+2025-03-07 15:05:11,859 - MainThread - root - INFO - Shutting down the event dispatcher (dispatcher.py:159)

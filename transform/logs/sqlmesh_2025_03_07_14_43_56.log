@@ -1,0 +1,2 @@
+2025-03-07 14:43:57,117 - MainThread - sqlmesh.core.config.scheduler - WARNING - The bigquery engine is not recommended for storing SQLMesh state in production deployments. Please see https://sqlmesh.readthedocs.io/en/stable/guides/configuration/#state-connection for a list of recommended engines and more information. (scheduler.py:112)
+2025-03-07 14:43:58,621 - MainThread - root - INFO - Shutting down the event dispatcher (dispatcher.py:159)
