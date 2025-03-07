@@ -1,0 +1,47 @@
+[
+  {
+    "name": "season",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "round",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "position",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "points",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "driver_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "constructor_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "grid",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "laps",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "status",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
