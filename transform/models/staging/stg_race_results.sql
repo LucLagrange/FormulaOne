@@ -15,9 +15,14 @@ MODEL (
         points_awarded = 'Points awarded to the driver based on their finishing position',
         laps_completed = 'Total number of laps completed by the driver',
         status = 'The status of the driver at the end of the race (e.g., Finished, Retired, etc.)'
+    ),
+    audits (
+      unique_values(columns = id_race_result),
+      not_null(columns = id_race_result)
     )
 );
 
+WITH base_table AS (
 SELECT
   CONCAT(season, '-', round, '-', driver_id) AS id_race_result,
   driver_id AS id_driver,
@@ -31,3 +36,19 @@ SELECT
   status
 FROM
     custom_script.race_result
+)
+
+SELECT
+    id_race_result,
+    id_driver,
+    id_constructor,
+    race_season,
+    round_number,
+    result,
+    grid_position,
+    points_awarded,
+    laps_completed
+    status
+FROM
+    base_table
+QUALIFY ROW_NUMBER() OVER(PARTITION BY id_race_result) = 1
