@@ -2,6 +2,7 @@ import requests
 import logging
 import os
 import time
+import datetime
 from typing import Dict, List, Optional
 from google.cloud import bigquery
 
@@ -34,6 +35,9 @@ def process_qualifying_results(data: Dict) -> List[Dict]:
     logging.info("Processing qualifying results data")
     processed_data: List[Dict] = []
 
+    # Add extraction timestamp
+    extraction_timestamp = datetime.datetime.utcnow().isoformat()
+
     if (
         "MRData" in data
         and "RaceTable" in data["MRData"]
@@ -44,6 +48,7 @@ def process_qualifying_results(data: Dict) -> List[Dict]:
             race_info = {
                 "season": race["season"],
                 "round": race["round"],
+                "extraction_timestamp": extraction_timestamp,
             }
             if "QualifyingResults" in race:
                 for result in race["QualifyingResults"]:

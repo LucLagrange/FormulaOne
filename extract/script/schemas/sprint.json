@@ -49,5 +49,10 @@
     "type": "STRING",
     "mode": "NULLABLE",
     "description": "Indicates the result is from a sprint"
+  },
+  {
+    "name": "extraction_timestamp",
+    "type": "TIMESTAMP ",
+    "mode": "NULLABLE"
   }
 ]

@@ -44,5 +44,10 @@
     "type": "STRING",
     "mode": "NULLABLE",
     "description": "Indicates the result is from a qualifying session"
+  },
+  {
+    "name": "extraction_timestamp",
+    "type": "TIMESTAMP ",
+    "mode": "NULLABLE"
   }
 ]

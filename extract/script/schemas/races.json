@@ -43,5 +43,10 @@
     "name": "status",
     "type": "STRING",
     "mode": "NULLABLE"
+  },
+  {
+    "name": "extraction_timestamp",
+    "type": "TIMESTAMP ",
+    "mode": "NULLABLE"
   }
 ]
