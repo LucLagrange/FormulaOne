@@ -33,7 +33,8 @@ SELECT
   Q1 AS q1_best_time,
   Q2 AS q2_best_time,
   Q3 AS q3_best_time,
-  event_type
+  event_type,
+  TIMESTAMP(extraction_timestamp) AS ts_extracted
 FROM
     custom_script.qualifying_result
 )
@@ -51,4 +52,4 @@ SELECT
     event_type
 FROM
     base_table
-QUALIFY ROW_NUMBER() OVER(PARTITION BY id_qualifying_result) = 1 -- Possible duplicates in the source table, as it's in append mode
+QUALIFY ROW_NUMBER() OVER(PARTITION BY id_qualifying_result ORDER BY ts_extracted DESC) = 1

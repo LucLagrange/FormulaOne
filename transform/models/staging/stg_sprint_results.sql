@@ -35,7 +35,8 @@ SELECT
   CAST(points AS INT) AS points_awarded,
   CAST(laps AS INT) AS laps_completed,
   status,
-  event_type
+  event_type,
+  TIMESTAMP(extraction_timestamp) AS ts_extracted
 FROM
     custom_script.sprint_result
 )
@@ -54,4 +55,4 @@ SELECT
     event_type
 FROM
     base_table
-QUALIFY ROW_NUMBER() OVER(PARTITION BY id_race_result) = 1 -- Possible duplicates in the source table, as it's in append mode
+QUALIFY ROW_NUMBER() OVER(PARTITION BY id_race_result ORDER BY ts_extracted DESC) = 1 -- Possible duplicates in the source table, as it's in append mode
