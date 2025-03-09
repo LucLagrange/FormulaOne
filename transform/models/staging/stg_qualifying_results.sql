@@ -13,10 +13,16 @@ MODEL (
         id_constructor = 'Unique identifier for the constructor',
         q1_best_time = 'Best time achieved by the driver in the Q1 session',
         q2_best_time = 'Best time achieved by the driver in the Q2 session',
-        q3_best_time = 'Best time achieved by the driver in the Q3 session'
+        q3_best_time = 'Best time achieved by the driver in the Q3 session',
+        event_type = 'The type of the event, qualifying in this table'
+    ),
+    audits (
+      unique_values(columns = id_qualifying_result),
+      not_null(columns = id_qualifying_result)
     )
 );
 
+WITH base_table AS(
 SELECT
   CONCAT(season, '-', round, '-', driver_id) AS id_qualifying_result,
   season AS race_season,
@@ -26,6 +32,23 @@ SELECT
   constructor_id AS id_constructor,
   Q1 AS q1_best_time,
   Q2 AS q2_best_time,
-  Q3 AS q3_best_time
+  Q3 AS q3_best_time,
+  event_type
 FROM
     custom_script.qualifying_result
+)
+
+SELECT
+    id_qualifying_result,
+    race_season,
+    round_number,
+    result,
+    id_driver,
+    id_constructor,
+    q1_best_time,
+    q2_best_time,
+    q3_best_time,
+    event_type
+FROM
+    base_table
+QUALIFY ROW_NUMBER() OVER(PARTITION BY id_qualifying_result) = 1 -- Possible duplicates in the source table, as it's in append mode

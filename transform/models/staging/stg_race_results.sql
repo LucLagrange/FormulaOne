@@ -14,7 +14,8 @@ MODEL (
         grid_position = 'The starting grid position of the driver',
         points_awarded = 'Points awarded to the driver based on their finishing position',
         laps_completed = 'Total number of laps completed by the driver',
-        status = 'The status of the driver at the end of the race (e.g., Finished, Retired, etc.)'
+        status = 'The status of the driver at the end of the race (e.g., Finished, Retired, etc.)',
+        event_type = 'The type of the event, race in this table'
     ),
     audits (
       unique_values(columns = id_race_result),
@@ -33,7 +34,8 @@ SELECT
   CAST(grid AS INT) AS grid_position,
   CAST(points AS INT) AS points_awarded,
   CAST(laps AS INT) AS laps_completed,
-  status
+  status,
+  'race' AS event_type
 FROM
     custom_script.race_result
 )
@@ -48,7 +50,8 @@ SELECT
     grid_position,
     points_awarded,
     laps_completed
-    status
+    status,
+    event_type
 FROM
     base_table
 QUALIFY ROW_NUMBER() OVER(PARTITION BY id_race_result) = 1
