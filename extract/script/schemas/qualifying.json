@@ -1,0 +1,53 @@
+[
+  {
+    "name": "season",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "round",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "position",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "driver_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "constructor_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Q1",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Q2",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Q3",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "event_type",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Indicates the result is from a qualifying session"
+  },
+  {
+    "name": "extraction_timestamp",
+    "type": "TIMESTAMP ",
+    "mode": "NULLABLE"
+  }
+]

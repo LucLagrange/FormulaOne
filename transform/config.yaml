@@ -1,0 +1,13 @@
+gateway:
+  bigquery:
+    connection:
+      type: bigquery
+      project: formulaone-448910
+      location: EU
+
+default_gateway: bigquery
+
+
+model_defaults:
+  dialect: bigquery
+  start: 2025-01-25
