@@ -32,7 +32,7 @@ SELECT
   CAST(round AS INT) AS round_number,
   CAST(position AS INT) AS result,
   CAST(grid AS INT) AS grid_position,
-  CAST(points AS INT) AS points_awarded,
+  CAST(points AS FLOAT64) AS points_awarded,
   CAST(laps AS INT) AS laps_completed,
   status,
   'race' AS event_type,
