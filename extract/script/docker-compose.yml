@@ -8,7 +8,7 @@ services:
       RESULTS_TABLE_ID: 'formulaone-448910.custom_script.race_result'
       SPRINT_TABLE_ID: 'formulaone-448910.custom_script.sprint_result'
       QUALIFYING_TABLE_ID: 'formulaone-448910.custom_script.qualifying_result'
-      SEASON: '2025'
+      SEASONS: '2000,2001,2003'
     volumes:
       # Source code
       - ./src/job:/opt/program/job

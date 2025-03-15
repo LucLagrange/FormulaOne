@@ -39,9 +39,9 @@ def process_sprint_results(data: Dict) -> List[Dict]:
     extraction_timestamp = datetime.datetime.utcnow().isoformat()
 
     if (
-        "MRData" in data
-        and "RaceTable" in data["MRData"]
-        and "Races" in data["MRData"]["RaceTable"]
+            "MRData" in data
+            and "RaceTable" in data["MRData"]
+            and "Races" in data["MRData"]["RaceTable"]
     ):
         races = data["MRData"]["RaceTable"]["Races"]
         for race in races:
@@ -89,28 +89,49 @@ def insert_results_to_bigquery(results: List[Dict], table_id: str) -> None:
 def main() -> None:
     # Get the table ID from environment variable
     table_id = os.getenv("SPRINT_TABLE_ID")
-    season = os.getenv("SEASON")
-
     if not table_id:
-        logging.error("Environment variable SPRINT_RESULTS_TABLE_ID is not set.")
+        logging.error("Environment variable SPRINT_TABLE_ID is not set.")
         return
+
+    # Get seasons from environment variable or use default
+    seasons_env = os.getenv("SEASONS")
+    if seasons_env:
+        # Split the comma-separated string into a list
+        seasons = [season.strip() for season in seasons_env.split(",")]
+        logging.info("Using seasons from environment variable: %s", seasons)
+    else:
+        # Default seasons if not specified
+        seasons = ["2021", "2022", "2023"]
+        logging.info("Using default seasons: %s", seasons)
 
     rounds = [str(round) for round in range(1, 30)]  # Example round range
 
-    for round_number in rounds:
-        sprint_data = fetch_f1_sprint_results(season, round_number)
-        if sprint_data:
-            sprint_results = process_sprint_results(sprint_data)
-            if sprint_results:
-                insert_results_to_bigquery(sprint_results, table_id)
+    # Loop through each season
+    for season in seasons:
+        logging.info("Processing season: %s", season)
+
+        # Process each round for the current season
+        for round_number in rounds:
+            sprint_data = fetch_f1_sprint_results(season, round_number)
+            if sprint_data and "MRData" in sprint_data and "RaceTable" in sprint_data["MRData"] and sprint_data["MRData"]["RaceTable"]["Races"]:
+                sprint_results = process_sprint_results(sprint_data)
+                if sprint_results:
+                    insert_results_to_bigquery(sprint_results, table_id)
+                else:
+                    logging.info(
+                        "No sprint results to insert for Season: %s, Round: %s",
+                        season,
+                        round_number,
+                    )
             else:
                 logging.info(
-                    "No sprint results to insert for Season: %s, Round: %s",
+                    "No sprint data available for Season: %s, Round: %s. Skipping.",
                     season,
                     round_number,
                 )
 
-            time.sleep(1)  # 1 seconds delay for burst limit (4 requests per second) and
+            # Add delay to respect rate limits
+            time.sleep(1)  # 1 second delay for burst limit (4 requests per second)
 
 
 if __name__ == "__main__":

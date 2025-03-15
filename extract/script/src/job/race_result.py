@@ -39,9 +39,9 @@ def process_race_results(data: Dict) -> List[Dict]:
     extraction_timestamp = datetime.datetime.utcnow().isoformat()
 
     if (
-        "MRData" in data
-        and "RaceTable" in data["MRData"]
-        and "Races" in data["MRData"]["RaceTable"]
+            "MRData" in data
+            and "RaceTable" in data["MRData"]
+            and "Races" in data["MRData"]["RaceTable"]
     ):
         races = data["MRData"]["RaceTable"]["Races"]
         for race in races:
@@ -87,34 +87,48 @@ def insert_results_to_bigquery(results: List[Dict], table_id: str) -> None:
 def main() -> None:
     # Get the table ID from environment variable
     table_id = os.getenv("RESULTS_TABLE_ID")
-    season = os.getenv("SEASON")
-
     if not table_id:
-        logging.error("Environment variable TABLE_ID is not set.")
+        logging.error("Environment variable RESULTS_TABLE_ID is not set.")
         return
+
+    # Get seasons from environment variable or use default
+    seasons_env = os.getenv("SEASONS")
+    if seasons_env:
+        # Split the comma-separated string into a list
+        seasons = [season.strip() for season in seasons_env.split(",")]
+        logging.info("Using seasons from environment variable: %s", seasons)
+    else:
+        # Default seasons if not specified
+        seasons = ["2021", "2022", "2023"]
+        logging.info("Using default seasons: %s", seasons)
 
     rounds = [str(round) for round in range(1, 30)]  # Creates a list of rounds
 
-    for round_number in rounds:
-        data = fetch_f1_results(season, round_number)
-        # Check if data exists for the round
-        if (
-            data
-            and "MRData" in data
-            and "RaceTable" in data["MRData"]
-            and data["MRData"]["RaceTable"]["Races"]
-        ):
-            results = process_race_results(data)
-            insert_results_to_bigquery(results, table_id)
-        else:
-            logging.info(
-                "No data available for Season: %s, Round: %s. Skipping.",
-                season,
-                round_number,
-            )
+    # Loop through each season
+    for season in seasons:
+        logging.info("Processing season: %s", season)
 
-        # Add delay to respect rate limits
-        time.sleep(1)  # 1 seconds delay for burst limit (4 requests per second)
+        # Then loop through each round for that season
+        for round_number in rounds:
+            data = fetch_f1_results(season, round_number)
+            # Check if data exists for the round
+            if (
+                    data
+                    and "MRData" in data
+                    and "RaceTable" in data["MRData"]
+                    and data["MRData"]["RaceTable"]["Races"]
+            ):
+                results = process_race_results(data)
+                insert_results_to_bigquery(results, table_id)
+            else:
+                logging.info(
+                    "No data available for Season: %s, Round: %s. Skipping.",
+                    season,
+                    round_number,
+                )
+
+            # Add delay to respect rate limits
+            time.sleep(1)  # 1 second delay for burst limit (4 requests per second)
 
 
 if __name__ == "__main__":
