@@ -11,3 +11,7 @@ default_gateway: bigquery
 model_defaults:
   dialect: bigquery
   start: 2025-01-25
+
+linter:
+  enabled: True
+  rules: "ALL"

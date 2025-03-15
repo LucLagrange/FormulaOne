@@ -13,6 +13,10 @@ MODEL (
         dt_birth = 'Drivers date of birth',
         nationality = 'Drivers nationality',
         driver_number = 'Drivers permanent number'
+    ),
+    audits (
+       unique_values(columns = id_driver),
+       not_null(columns = id_driver)
     )
 );
 

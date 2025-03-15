@@ -7,6 +7,10 @@ MODEL (
     column_descriptions (
         id_season = 'Unique identifier for the season',
         season_url = "Wikipedia URL for the season"
+    ),
+    audits (
+       unique_values(columns = id_season),
+       not_null(columns = id_season)
     )
 );
 
