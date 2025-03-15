@@ -1,11 +1,11 @@
 MODEL (
-    name marts.dim_race,
+    name warehouse.dim_race,
     kind FULL,
     cron '@daily',
-    grain race_key,
+    grain id_race,
     description 'Race dimension table containing all F1 races information',
     column_descriptions (
-        id_race = 'Unique identifier for the race (combination of race name and season)',
+        id_race = 'Unique identifier for the race (combination of season and round)',
         race_name = 'Official name of the race (e.g., Monaco Grand Prix)',
         dt_race = 'Date when the race took place',
         round_number = 'Sequential number of the race in the season calendar',

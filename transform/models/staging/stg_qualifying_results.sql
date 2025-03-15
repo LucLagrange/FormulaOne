@@ -6,6 +6,7 @@ MODEL (
     description 'The qualifying results for each driver, at each season round',
     column_descriptions (
         id_qualifying_result = 'Unique identifier for the qualifying result, combining season, round, and driver ID',
+        id_race = 'Unique identifier for the race',
         race_season = 'The season in which the race took place',
         round_number = 'The round number of the season',
         result = 'The qualifying position achieved by the driver',
@@ -25,6 +26,7 @@ MODEL (
 WITH base_table AS(
 SELECT
   CONCAT(season, '-', round, '-', driver_id) AS id_qualifying_result,
+  CONCAT(season, '-', round) AS id_race,
   season AS race_season,
   CAST(round AS INT) AS round_number,
   CAST(position AS INT) AS result,
@@ -41,6 +43,7 @@ FROM
 
 SELECT
     id_qualifying_result,
+    id_race,
     race_season,
     round_number,
     result,
