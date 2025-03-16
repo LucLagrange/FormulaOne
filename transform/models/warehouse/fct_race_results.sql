@@ -31,6 +31,7 @@ MODEL (
     )
 );
 
+WITH base_table AS(
 SELECT
   races.id_race_result,
   races.id_driver,
@@ -59,3 +60,29 @@ ON races.id_race_result = sprints.id_race_result
 LEFT JOIN
   staging.stg_qualifying_results AS qualifying
 ON races.id_race_result = qualifying.id_qualifying_result
+)
+
+SELECT
+      id_race_result,
+      id_driver,
+      id_constructor,
+      id_race,
+      race_season,
+      round_number,
+      qualifying_result,
+      q1_best_time,
+      q2_best_time,
+      q3_best_time,
+      race_result,
+      race_grid_position,
+      race_points_awarded,
+      race_status,
+      sprint_result,
+      sprint_grid_position,
+      sprints_points_awarded,
+      sprint_status,
+      total_points_awarded,
+      SUM(total_points_awarded) OVER(PARTITION BY id_constructor, race_season ORDER BY round_number) AS cumulated_points_constructor,
+      SUM(total_points_awarded) OVER(PARTITION BY id_driver, race_season ORDER BY round_number) AS cumulated_points_driver
+FROM
+    base_table
