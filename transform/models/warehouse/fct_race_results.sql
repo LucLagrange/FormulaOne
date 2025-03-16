@@ -23,7 +23,9 @@ MODEL (
         sprint_grid_position = 'Starting grid position for the sprint race, if applicable',
         sprints_points_awarded = 'Championship points awarded for the sprint race result, if applicable',
         sprint_status = 'Status at the end of the sprint race (e.g., Finished, DNF, DSQ), if applicable',
-        total_points_awarded = "The total number of points awarded to the drivers"
+        total_points_awarded = "The total number of points awarded to the drivers",
+        cumulated_points_constructor = 'The cumulated points awarded to the constructor at this stage of the season',
+        cumulated_points_driver = 'The cumulated points awarded to the driver at this stage of the season'
     ),
     audits (
       unique_values(columns = id_race_result),
