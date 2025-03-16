@@ -7,6 +7,7 @@ MODEL (
     column_descriptions (
         id_sprint_result = 'Unique identifier for the sprint  result, combining season, round, and driver ID',
         id_driver = 'Unique identifier for the driver',
+        id_race = 'Unique identifier for the race',
         id_constructor = 'Unique identifier for the constructor',
         race_season = 'The season in which the race took place',
         round_number = 'The round number of the season',
@@ -26,13 +27,14 @@ MODEL (
 WITH base_table AS (
 SELECT
   CONCAT(season, '-', round, '-', driver_id) AS id_race_result,
+  CONCAT(season, '-', round) AS id_race,
   driver_id AS id_driver,
   constructor_id AS id_constructor,
   season AS race_season,
   CAST(round AS INT) AS round_number,
   CAST(position AS INT) AS result,
   CAST(grid AS INT) AS grid_position,
-  CAST(points AS INT) AS points_awarded,
+  CAST(points AS FLOAT64) AS points_awarded,
   CAST(laps AS INT) AS laps_completed,
   status,
   event_type,
@@ -45,6 +47,7 @@ SELECT
     id_race_result,
     id_driver,
     id_constructor,
+    id_race,
     race_season,
     round_number,
     result,

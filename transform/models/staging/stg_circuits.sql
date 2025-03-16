@@ -12,6 +12,10 @@ MODEL (
         latitude = 'latitude of the circuit',
         longitude = 'longitude of the circuit',
         locality = 'Name of the locality associated to the circuit'
+    ),
+    audits (
+       unique_values(columns = id_circuit),
+       not_null(columns = id_circuit)
     )
 );
 

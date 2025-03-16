@@ -5,16 +5,22 @@ MODEL (
     grain id_race,
     description 'The races on the Formula One Championship',
     column_descriptions (
-        id_race = "Unique identifier for the race (name + season)",
+        id_race = "Unique identifier for the race (season + round)",
+        id_circuit = 'Identifier for the circuit the race takes part at',
         race_name = 'Name of the race',
-        constructor_name = 'Properly formatted name of the constructor',
-        constructor_url = 'The Wikipedia URL of the constructor',
-        nationality = 'The nationality of the constructor'
+        dt_race = 'The date of the race',
+        season = 'The season the race takes part in',
+        url = 'The url of the season'
+    ),
+    audits (
+       unique_values(columns = id_race),
+       not_null(columns = id_race)
     )
 );
 
 SELECT
-    CONCAT(raceName, '-', season) AS id_race,
+    CONCAT(season, '-', round) AS id_race,
+    JSON_VALUE(Circuit, '$.circuitId') AS id_circuit,
     raceName AS race_name,
     CAST(`date` AS DATE) AS dt_race,
     CAST(round AS INT) AS round_number,

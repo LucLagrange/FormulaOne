@@ -39,9 +39,9 @@ def process_qualifying_results(data: Dict) -> List[Dict]:
     extraction_timestamp = datetime.datetime.utcnow().isoformat()
 
     if (
-        "MRData" in data
-        and "RaceTable" in data["MRData"]
-        and "Races" in data["MRData"]["RaceTable"]
+            "MRData" in data
+            and "RaceTable" in data["MRData"]
+            and "Races" in data["MRData"]["RaceTable"]
     ):
         races = data["MRData"]["RaceTable"]["Races"]
         for race in races:
@@ -88,28 +88,49 @@ def insert_results_to_bigquery(results: List[Dict], table_id: str) -> None:
 def main() -> None:
     # Get the table ID from environment variable
     table_id = os.getenv("QUALIFYING_TABLE_ID")
-    season = os.getenv("SEASON")
-
     if not table_id:
-        logging.error("Environment variable QUALIFYING_RESULTS_TABLE_ID is not set.")
+        logging.error("Environment variable QUALIFYING_TABLE_ID is not set.")
         return
+
+    # Get seasons from environment variable or use default
+    seasons_env = os.getenv("SEASONS")
+    if seasons_env:
+        # Split the comma-separated string into a list
+        seasons = [season.strip() for season in seasons_env.split(",")]
+        logging.info("Using seasons from environment variable: %s", seasons)
+    else:
+        # Default seasons if not specified
+        seasons = ["2021", "2022", "2023"]
+        logging.info("Using default seasons: %s", seasons)
 
     rounds = [str(round) for round in range(1, 30)]  # Example round range
 
-    for round_number in rounds:
-        qualifying_data = fetch_f1_qualifying_results(season, round_number)
-        if qualifying_data:
-            qualifying_results = process_qualifying_results(qualifying_data)
-            if qualifying_results:
-                insert_results_to_bigquery(qualifying_results, table_id)
+    # Loop through each season
+    for season in seasons:
+        logging.info("Processing season: %s", season)
+
+        # Process each round for the current season
+        for round_number in rounds:
+            qualifying_data = fetch_f1_qualifying_results(season, round_number)
+            if qualifying_data and "MRData" in qualifying_data and "RaceTable" in qualifying_data["MRData"] and qualifying_data["MRData"]["RaceTable"]["Races"]:
+                qualifying_results = process_qualifying_results(qualifying_data)
+                if qualifying_results:
+                    insert_results_to_bigquery(qualifying_results, table_id)
+                else:
+                    logging.info(
+                        "No qualifying results to insert for Season: %s, Round: %s",
+                        season,
+                        round_number,
+                    )
             else:
                 logging.info(
-                    "No qualifying results to insert for Season: %s, Round: %s",
+                    "No qualifying data available for Season: %s, Round: %s. Skipping.",
                     season,
                     round_number,
                 )
+
             # Add delay to respect rate limits
-            time.sleep(1)  # 1 seconds delay for burst limit (4 requests per second)
+            time.sleep(1)  # 1 second delay for burst limit (4 requests per second)
 
 
 if __name__ == "__main__":

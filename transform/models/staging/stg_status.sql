@@ -8,6 +8,10 @@ MODEL (
         id_status = 'Unique identifier for the status',
         status_name = "The name of the status",
         nb_occurrences = "Occurrence number of a status"
+    ),
+    audits (
+       unique_values(columns = id_status),
+       not_null(columns = id_status)
     )
 );
 

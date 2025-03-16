@@ -9,6 +9,10 @@ MODEL (
         constructor_name = 'Properly formatted name of the constructor',
         constructor_url = 'The Wikipedia URL of the constructor',
         nationality = 'The nationality of the constructor'
+    ),
+    audits (
+       unique_values(columns = id_constructor),
+       not_null(columns = id_constructor)
     )
 );
 
